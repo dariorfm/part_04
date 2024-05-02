@@ -5,7 +5,7 @@ const app = express();
 
 
 app.get('/', (req, res) => {
-    res.send('<h1>Hello, this is part 04 of FullstakOpen Course!</h1>');
+    res.send('<h1>Hello, this is part 04 of FullstakOpen Course! Now, if I make a change it could be updated only restarting de web browser.</h1>');
 });
 
 
