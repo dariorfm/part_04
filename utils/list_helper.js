@@ -30,9 +30,25 @@ const mostBlogs = (blogs) => {
   }
 }
 
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) {
+    return undefined
+  } else if (blogs.length === 1) {
+    return { likes: blogs[0].likes, author: blogs[0].author }
+  } else {
+    const authors = blogs.map(blog => blog.author)
+    const author = authors.reduce((max, author) => {
+      const likes = blogs.filter(blog => blog.author === author).reduce((sum, blog) => sum + blog.likes, 0)
+      return likes > max.likes ? { likes, author } : max
+    }, { likes: 0, author: '' })
+    return { author: author.author, likes: author.likes }
+  }
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }

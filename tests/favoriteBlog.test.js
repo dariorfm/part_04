@@ -77,7 +77,7 @@ describe('favorite blog', () => {
     }
   ]
 
-  test('of a bigger list is the blog with most likes', () => {
+  test('of a bigger list is the blog with more likes', () => {
     const result = listHelper(blogs)
     assert.deepStrictEqual(result, blogs[2])
   })
