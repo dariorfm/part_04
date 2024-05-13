@@ -1,8 +1,8 @@
 const { test, describe } = require('node:test')
 const assert = require('assert')
-const listHelper = require('../utils/list_helper').favoriteBlog
+const listHelper = require('../utils/list_helper').mostBlogs
 
-describe('favorite blog', () => {
+describe('most blogs', () => {
   const emptyList = []
 
   test('of empty list is undefined', () => {
@@ -21,9 +21,9 @@ describe('favorite blog', () => {
     }
   ]
 
-  test('when list has only one blog, equals the same blog', () => {
+  test('when list has only one blog, equals the same blog values', () => {
     const result = listHelper(listWithOneBlog)
-    assert.deepStrictEqual(result, listWithOneBlog[0])
+    assert.deepStrictEqual(result, { author: 'Edsger W. Dijkstra', blogs: 1 })
   })
 
   const blogs = [
@@ -77,8 +77,10 @@ describe('favorite blog', () => {
     }
   ]
 
-  test('of a bigger list is the blog with most likes', () => {
+  test('when list of blogs has multiple authors, equals the author with more blogs', () => {
     const result = listHelper(blogs)
-    assert.deepStrictEqual(result, blogs[2])
+    assert.deepStrictEqual(result.author, 'Robert C. Martin')
+    assert.deepStrictEqual(result.blogs, 3)
   })
-})
+}
+)
