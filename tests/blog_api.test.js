@@ -108,6 +108,22 @@ describe('when there is initially some blogs saved', () => {
 
       assert.deepStrictEqual(resultBlog.body, blogToView)
     })
+
+    test('fails with status code 404 if blog does not exist', async () => {
+      const validNonexistingId = await helper.nonExistingId()
+
+      await api
+        .get(`/api/blogs/${validNonexistingId}`)
+        .expect(404)
+    })
+
+    test('fails with status code 400 if id is invalid', async () => {
+      const invalidId = '5a3d5da59070081a82a3445'
+
+      await api
+        .get(`/api/blogs/${invalidId}`)
+        .expect(400)
+    })
   })
 
   describe('delletion of a blog', () => {
@@ -126,6 +142,13 @@ describe('when there is initially some blogs saved', () => {
       const titles = blogsAtEnd.map(r => r.title)
 
       assert(!titles.includes(blogToDelete.title))
+    })
+
+    test('succeds with status code 204 if blog does not exist', async () => {
+      const validNonexistingId = await helper.nonExistingId()
+      await api
+        .delete(`/api/blogs/${validNonexistingId}`)
+        .expect(204)
     })
   })
 
