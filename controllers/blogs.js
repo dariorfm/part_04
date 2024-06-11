@@ -5,7 +5,7 @@ blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
 
   const user = request.user
-  console.log('Userito', user)
+  // console.log('Userito', user)
 
   const blog = new Blog({
     title: body.title,

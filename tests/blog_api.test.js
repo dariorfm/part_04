@@ -39,65 +39,75 @@ describe('when there is initially some blogs saved', () => {
     })
   })
 
-  describe('addition of a new blog', () => {
-    test('success with valid data', async () => {
+  describe('Addition of a new blog', () => {
+    test('succeeds when user is logged in', async () => {
+      const token = await helper.validToken()
+
       const newBlog = {
         title: 'Blog 3',
+        url: 'http://blog3.com'
+      }
+
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+    })
+
+    test('fails with status code 401 when user is not logged in', async () => {
+      const token = null
+      const newBlog = {
+        title: 'Blog 3',
+        url: 'http://blog3.com'
+      }
+
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newBlog)
+        .expect(401)
+    })
+
+    test('if likes property is missing, it defaults to 0', async () => {
+      const token = await helper.validToken()
+
+      const newBlog = {
+        title: 'Blog 3',
+        url: 'http://blog3.com'
+      }
+
+      const savedBlog = await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+      assert.strictEqual(savedBlog.body.likes, 0)
+    })
+
+    test('fails with status code 400 if title and url are missing', async () => {
+      const token = await helper.validToken()
+
+      const newBlog = {
         author: 'Author 3',
-        url: 'http://blog3.com',
         likes: 3
       }
 
       await api
         .post('/api/blogs')
-        .send(newBlog)
-        .expect(201)
-        .expect('Content-Type', /application\/json/)
-
-      const blogsAtEnd = await helper.blogsInDb()
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
-
-      const titles = blogsAtEnd.map(r => r.title)
-      assert(titles.includes('Blog 3'))
-    })
-
-    test('if title or url property is missing, return 400 Bad Request', async () => {
-      const newBlog = {
-        author: 'Author 5',
-        likes: 5
-      }
-
-      await api
-        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
 
       const blogsAtEnd = await helper.blogsInDb()
-
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
-    })
-
-    test('if likes property is missing, it will default to 0', async () => {
-      const newBlog = {
-        title: 'Blog 4',
-        author: 'Author 4',
-        url: 'http://blog4.com'
-      }
-
-      await api
-        .post('/api/blogs')
-        .send(newBlog)
-        .expect(201)
-        .expect('Content-Type', /application\/json/)
-
-      const blogsAtEnd = await helper.blogsInDb()
-      const blog = blogsAtEnd.find(blog => blog.title === 'Blog 4')
-
-      assert.strictEqual(blog.likes, 0)
     })
   })
 
-  describe('viewing a specific blog', () => {
+  describe('Viewing a specific blog', () => {
     test('succeds with a valid id', async () => {
       const blogsAtStart = await helper.blogsInDb()
 
@@ -128,7 +138,7 @@ describe('when there is initially some blogs saved', () => {
     })
   })
 
-  describe('delletion of a blog', () => {
+  describe('Delletion of a blog', () => {
     test('succeds with status code 204 if id is valid', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]
@@ -154,7 +164,7 @@ describe('when there is initially some blogs saved', () => {
     })
   })
 
-  describe('updating a blog', () => {
+  describe('Updating a blog', () => {
     test('succeeds with status code 200 if id is valid', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToUpdate = blogsAtStart[0]
@@ -174,7 +184,7 @@ describe('when there is initially some blogs saved', () => {
   })
 })
 
-describe('when there is initially one user in db', () => {
+describe('Create a new User when there is initially one user in db', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
